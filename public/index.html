@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Does ChatGPT know you exist? — Live ChatGPT brand visibility check</title>
+<meta name="description" content="Ask ChatGPT — live — whether it recommends your brand or sends your buyers to competitors. Powered by Bright Data." />
+<meta property="og:title" content="Does ChatGPT know you exist?" />
+<meta property="og:description" content="Ask ChatGPT live whether it names your brand. Real-time, BYOK." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A4%96%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f5fff9; --fg:#1a1a1a; --surface:#fff; --border:#1a1a1a;
+    --accent:#10a37f; --accent-2:#ffe600; --coral:#ff6b6b; --lime:#bfff00; --muted:#5f6b65;
+    --shadow:4px; --bw:3px; --radius:12px;
+    --sans:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --mono:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.5;
+    background-image:radial-gradient(var(--border) 0.6px,transparent 0.6px);background-size:22px 22px;background-position:-11px -11px;background-attachment:fixed}
+  ::selection{background:var(--accent);color:#fff}
+  a{color:inherit}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  .card{background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow) var(--shadow) 0 var(--border)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow) var(--shadow) 0 var(--border);font-family:var(--sans);font-weight:700;font-size:15px;cursor:pointer;transition:transform .08s,box-shadow .08s;user-select:none;color:var(--fg)}
+  .btn:hover{box-shadow:2px 2px 0 var(--border);transform:translate(2px,2px)}
+  .btn:active{box-shadow:0 0 0 var(--border);transform:translate(4px,4px)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-ghost{background:transparent;box-shadow:2px 2px 0 var(--border)}
+  .btn-lg{padding:16px 26px;font-size:17px}
+  .input,select{width:100%;background:var(--surface);border:var(--bw) solid var(--border);border-radius:var(--radius);padding:13px 15px;font-size:15px;font-family:var(--sans);color:var(--fg);outline:none;transition:box-shadow .15s}
+  .input:focus,select:focus{box-shadow:var(--shadow) var(--shadow) 0 var(--accent)}
+  .input::placeholder{color:#a3a3a3}
+  label.lab{display:block;font-weight:700;font-size:13px;margin:0 0 7px 2px}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;border:2px solid var(--border);border-radius:7px;background:var(--accent);color:#fff}
+  .mono{font-family:var(--mono)} .muted{color:var(--muted)}
+  header.top{display:flex;align-items:center;justify-content:space-between;padding:22px 0 8px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px}
+  .logo .dot{width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--border)}
+  .hero{padding:38px 0 8px;text-align:center}
+  h1.title{font-size:clamp(38px,7.5vw,70px);line-height:1.04;font-weight:900;letter-spacing:-1.5px;margin:16px 0 0}
+  .hl{display:inline-block;background:var(--accent);color:#fff;border:var(--bw) solid var(--border);border-radius:14px;padding:0 14px;transform:rotate(-2deg);box-shadow:5px 5px 0 var(--border)}
+  .sub{font-size:clamp(16px,2.4vw,20px);max-width:600px;margin:24px auto 0;color:#333;font-weight:500}
+  .sub b{font-weight:800;background:linear-gradient(transparent 62%,var(--accent-2) 62%)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:34px 0 0}
+  .step{padding:16px} .step .n{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;margin-bottom:10px;color:#fff}
+  .step h3{margin:0 0 5px;font-size:15px;font-weight:800} .step p{margin:0;font-size:13.5px;color:var(--muted)}
+  .example{margin:14px 0 0;padding:14px 16px;background:#fff;border:var(--bw) solid var(--border);border-radius:var(--radius);box-shadow:3px 3px 0 var(--border);font-size:14px}
+  .example .tag{font-weight:800;color:var(--accent)}
+  .panel{margin:30px 0 0;padding:22px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px} .field{margin-bottom:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+  .chip{font-size:12px;font-weight:600;padding:6px 11px;border:2px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;transition:background .12s,transform .08s}
+  .chip:hover{background:var(--lime);transform:translateY(-1px)}
+  .tokenrow{display:flex;gap:10px} .tokenrow .input{flex:1}
+  .reveal{border:var(--bw) solid var(--border);border-radius:var(--radius);background:#fff;padding:0 13px;font-weight:700;font-size:13px;cursor:pointer;box-shadow:3px 3px 0 var(--border)}
+  .keyhint{font-size:12.5px;color:var(--muted);margin:8px 2px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .keyhint a{font-weight:700;text-decoration:underline;text-underline-offset:2px}
+  .remember{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .remember input{width:17px;height:17px;accent-color:var(--accent)}
+  .toggle{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;cursor:pointer}
+  .toggle input{width:17px;height:17px;accent-color:var(--accent)}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .err{margin-top:14px;padding:13px 15px;border:var(--bw) solid var(--coral);border-radius:var(--radius);box-shadow:4px 4px 0 var(--coral);background:#fff5f5;color:#c0392b;font-weight:700;font-size:14px;display:none}
+  .runner{margin:26px 0 0;padding:22px;display:none}
+  .runhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .runner h2{margin:0;font-size:20px;font-weight:900}
+  .timer{font-family:var(--mono);font-weight:600;font-size:14px;background:var(--accent);color:#fff;border:2px solid var(--border);border-radius:8px;padding:4px 10px}
+  .estate{margin-top:16px;font-size:14px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:9px}
+  .pulse{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--border);animation:pulse 1s infinite}
+  .pulse.done{background:var(--lime);animation:none} .pulse.fail{background:var(--coral);animation:none}
+  @keyframes pulse{0%,100%{transform:scale(.8);opacity:.6}50%{transform:scale(1.25);opacity:1}}
+  .bar{height:12px;border:2px solid var(--border);border-radius:20px;background:#fff;overflow:hidden;margin-top:16px}
+  .bar>i{display:block;height:100%;width:0;background:repeating-linear-gradient(45deg,var(--accent),var(--accent) 9px,#0c8466 9px,#0c8466 18px);transition:width .6s}
+  .statusline{margin-top:14px;font-size:13.5px;color:var(--muted);min-height:20px}
+  .results{margin:26px 0 0;display:none}
+  .verdict{padding:26px 24px;text-align:center}
+  .verdict .vlabel{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .verdict h2{margin:8px 0 6px;font-size:clamp(26px,5vw,40px);font-weight:900;letter-spacing:-1px}
+  .verdict p{margin:0;font-size:15px;font-weight:600;color:#333;max-width:560px;margin-inline:auto}
+  .verdict.bad{background:#fff0f0} .verdict.bad h2{color:#e03131}
+  .verdict.mixed{background:#fffbe6} .verdict.good{background:#effff8} .verdict.good h2{color:#0c8a5a} .verdict.neutral{background:#fff}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+  .stat{padding:16px;text-align:center} .stat .v{font-size:30px;font-weight:900;font-family:var(--mono)} .stat .k{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+  .ecard{padding:20px;margin-top:16px}
+  .ec-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .ec-name{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:900}
+  .ec-tags{display:flex;gap:8px;flex-wrap:wrap}
+  .tag2{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:4px 9px;border:2px solid var(--border);border-radius:7px}
+  .tag-yes{background:var(--lime)} .tag-no{background:var(--coral);color:#fff} .tag-mid{background:var(--accent-2)} .tag-info{background:#fff}
+  .answer{margin-top:14px;font-size:14.5px;line-height:1.6;color:#222;border-left:3px solid var(--border);padding:2px 0 2px 14px;max-height:120px;overflow:hidden;position:relative;transition:max-height .3s}
+  .answer.open{max-height:3000px} .answer mark{background:var(--accent-2);padding:0 2px;border-radius:3px;font-weight:700}
+  .answer .fade{position:absolute;left:0;right:0;bottom:0;height:42px;background:linear-gradient(transparent,#fff)} .answer.open .fade{display:none}
+  .moreBtn{margin-top:8px;font-size:12.5px;font-weight:800;background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px;color:var(--muted)}
+  .citehead{margin:18px 0 8px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .cites{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .cite{display:flex;align-items:center;gap:12px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;background:#fff}
+  .cite .rank{font-family:var(--mono);font-weight:700;font-size:13px;width:26px;height:26px;flex:none;display:flex;align-items:center;justify-content:center;border:2px solid var(--border);border-radius:7px;background:var(--bg)}
+  .cite .cmeta{min-width:0;flex:1} .cite .cdom{font-weight:800;font-size:13.5px;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cite .ctitle{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cite.you{background:var(--lime);box-shadow:3px 3px 0 var(--border)}
+  .cite a.open{font-size:11px;font-weight:800;text-decoration:none;border:2px solid var(--border);border-radius:6px;padding:3px 8px;background:var(--bg)}
+  .note{margin-top:12px;font-size:13px;color:var(--muted);background:#fbfdfb;border:2px dashed var(--border);border-radius:10px;padding:10px 12px}
+  .board{padding:20px;margin-top:16px} .board h3{margin:0 0 4px;font-size:18px;font-weight:900} .board .bsub{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+  .export{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;align-items:center} .export .lab2{font-weight:800;font-size:13px}
+  footer{margin:48px 0 30px;text-align:center} footer .love{font-weight:800;font-size:15px} footer .love a{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
+  footer .pw{margin-top:8px;font-size:12px;color:#9a9a8f} footer .pw a{font-weight:700}
+  @media(max-width:680px){.steps,.stats{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.hero{padding:24px 0 4px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo"><span class="dot"></span> chatgpt<span class="muted">·visibility</span></div>
+    <a class="badge" href="#check" style="text-decoration:none">🤖 live check</a>
+  </header>
+
+  <section class="hero">
+    <span class="badge">Real-time · ChatGPT (gpt-5)</span>
+    <h1 class="title">Does <span class="hl">ChatGPT</span><br/>know you exist?</h1>
+    <p class="sub">ChatGPT is where your buyers now ask <i>“what should I use?”</i>. Ask it about your category and find out — live — whether it names you, or <b>hands your customers to competitors</b>.</p>
+
+    <div class="steps">
+      <div class="card step"><div class="n" style="background:var(--accent)">1</div><h3>Ask like a buyer</h3><p>Enter your brand and a real question your customers ask before buying.</p></div>
+      <div class="card step"><div class="n" style="background:#0c8466">2</div><h3>We ask ChatGPT live</h3><p>A real ChatGPT session answers — with web search on — and we capture every source.</p></div>
+      <div class="card step"><div class="n" style="background:#222">3</div><h3>Get the verdict</h3><p>Named, cited, or invisible — plus the competitor pages winning instead of you.</p></div>
+    </div>
+
+    <div class="example"><span class="tag">Example →</span> Brand <b>“ROASPIG”</b>, question <i>“best AI ad creative tools in 2026”</i>. ChatGPT named AdCreative, Pencil &amp; Creatopy… and never mentioned ROASPIG. <b>That gap is the whole game.</b></div>
+  </section>
+
+  <section id="check" class="card panel">
+    <div class="grid2">
+      <div class="field"><label class="lab" for="brand">Your brand</label><input id="brand" class="input" placeholder="e.g. ROASPIG" autocomplete="off" /></div>
+      <div class="field"><label class="lab" for="prompt2">&nbsp;</label>
+        <label class="toggle" style="padding:13px 0"><input type="checkbox" id="websearch" checked /> Force web search (recommended for live citations)</label>
+      </div>
+    </div>
+    <div class="field"><label class="lab" for="prompt">The question your buyers ask ChatGPT</label>
+      <input id="prompt" class="input" placeholder="best AI tools for Meta media buying" autocomplete="off" />
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="field"><label class="lab" for="token">Your Bright Data API token</label>
+      <div class="tokenrow">
+        <input id="token" class="input mono" type="password" placeholder="paste your token — used live, never stored" autocomplete="off" spellcheck="false" />
+        <button class="reveal" id="revealBtn" type="button">show</button>
+      </div>
+      <div class="keyhint"><label class="remember"><input type="checkbox" id="remember" /> Remember on this device</label><span>·</span><span>No token yet? <a href="https://brightdata.com/cp/zones" target="_blank" rel="noopener">Grab one free in 2 minutes →</a></span></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary btn-lg" id="runBtn">🤖 Ask ChatGPT about me</button>
+      <button class="btn btn-ghost btn-lg" id="sampleBtn">See a real sample</button>
+    </div>
+    <div class="err" id="err"></div>
+  </section>
+
+  <section class="card runner" id="runner">
+    <div class="runhead"><h2>Asking ChatGPT about <span id="runBrand">your brand</span>…</h2><span class="timer" id="timer">0s</span></div>
+    <div class="estate"><span class="pulse" id="pulse"></span><span id="etext">queued…</span></div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="statusline" id="statusline">Spinning up a live ChatGPT session… this usually takes ~90 seconds.</div>
+  </section>
+
+  <section class="results" id="results"></section>
+
+  <footer>
+    <div class="love">Built with love by <a href="https://nofluff.online" target="_blank" rel="noopener">Yaron · nofluff.online</a></div>
+    <div class="pw">Powered by <a href="https://brightdata.com" target="_blank" rel="noopener">Bright&nbsp;Data</a> · BYOK · your token never leaves your request</div>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const CFG = { engine:"chatgpt", label:"ChatGPT", icon:"🤖", model:"gpt-5" };
+  const $ = (id) => document.getElementById(id);
+  const POLL_MS = 4000, MAX_MS = 4*60*1000;
+  const EXAMPLES = ["best AI ad creative tools in 2026","best AI tools for Meta media buying","best CRM for startups","recommended cold email tools","best no-code automation platforms"];
+  let run = null;
+
+  const esc = (s) => String(s==null?"":s).replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  function domainOf(s){if(!s)return"";try{let u=String(s).trim();if(!/^https?:\/\//i.test(u))u="https://"+u;return new URL(u).hostname.replace(/^www\./,"");}catch{return String(s).replace(/^https?:\/\//i,"").replace(/^www\./,"").split("/")[0];}}
+  const answerOf=(r)=>r&&(r.answer_text||r.answer||r.answer_text_markdown||"")||"";
+  function citationsOf(rec){if(!rec)return[];const out=[],seen=new Set();const push=(c)=>{if(!c)return;const url=c.url||c.link||"";const domain=domainOf(url)||(c.domain?domainOf(c.domain):"");const key=(url||c.title||"").toLowerCase().trim();if(!key||seen.has(key))return;seen.add(key);out.push({url,title:c.title||c.name||"",domain,position:out.length+1});};for(const arr of [rec.citations,rec.sources,rec.search_sources,rec.references,rec.links_attached]){if(Array.isArray(arr)&&arr.length){arr.forEach(push);if(out.length)break;}}return out;}
+  function brandInText(text,brand){if(!brand||!text)return false;const b=brand.toLowerCase().trim();const t=text.toLowerCase();if(b.length<2)return false;if(t.includes(b))return true;const ns=b.replace(/\s+/g,"");return ns.length>=3&&t.replace(/\s+/g,"").includes(ns);}
+  function brandCitedPos(cites,brand){if(!brand)return null;const b=brand.toLowerCase().replace(/[\s.]+/g,"");if(b.length<3)return null;for(const c of cites){const hay=((c.domain||"")+" "+(c.url||"")+" "+(c.title||"")).toLowerCase().replace(/[\s.]+/g,"");if(hay.includes(b))return c.position;}return null;}
+  function highlight(text,brand){let h=esc(text);if(brand&&brand.trim().length>=2){try{const re=new RegExp("("+brand.trim().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi");h=h.replace(re,"<mark>$1</mark>");}catch{}}return h;}
+
+  function showErr(m){const e=$("err");e.textContent=m;e.style.display="block";e.scrollIntoView({behavior:"smooth",block:"center"});}
+  function clearErr(){const e=$("err");e.style.display="none";e.textContent="";}
+  function loadToken(){const t=localStorage.getItem("bd_token");if(t){$("token").value=t;$("remember").checked=true;}}
+  function persistToken(){if($("remember").checked)localStorage.setItem("bd_token",$("token").value.trim());else localStorage.removeItem("bd_token");}
+  function buildChips(){$("chips").innerHTML=EXAMPLES.map((e)=>`<span class="chip" data-q="${esc(e)}">${esc(e)}</span>`).join("");$("chips").querySelectorAll(".chip").forEach((c)=>c.addEventListener("click",()=>{$("prompt").value=c.dataset.q;$("prompt").focus();}));}
+  function authHeader(){return{Authorization:"Bearer "+$("token").value.trim()};}
+  async function api(path,opts={}){const res=await fetch(path,opts);const text=await res.text();let data;try{data=JSON.parse(text);}catch{data={raw:text};}return{ok:res.ok,status:res.status,data};}
+
+  async function startRun(){
+    clearErr();
+    const brand=$("brand").value.trim(), prompt=$("prompt").value.trim(), token=$("token").value.trim(), web_search=$("websearch").checked;
+    if(!prompt)return showErr("Enter the question your buyers ask ChatGPT (e.g. “best CRM for startups”).");
+    if(!token)return showErr("Paste your Bright Data API token to run a live check. It’s used live and never stored.");
+    persistToken();
+    setRunning(true);
+    run={brand,prompt,started:Date.now(),status:"running",record:null,error:null,timer:null};
+    $("runBrand").textContent=brand||"your brand";
+    startTimer();
+    const {ok,status,data}=await api("/api/check",{method:"POST",headers:{"content-type":"application/json",...authHeader()},body:JSON.stringify({brand,prompt,web_search})});
+    if(!ok){return settle({status:"error",error:data.error||("Request failed ("+status+").")});}
+    if(data.done&&data.record){return settle({status:"done",record:data.record});}
+    if(data.snapshot_id){poll(data.snapshot_id);return;}
+    settle({status:"error",error:data.error||"Unexpected response from the server."});
+  }
+
+  function poll(sid){
+    const tick=async()=>{
+      if(!run||run.status!=="running")return;
+      if(Date.now()-run.started>MAX_MS)return settle({status:"error",error:"Timed out after 4 minutes."});
+      const {ok,data}=await api("/api/status?id="+encodeURIComponent(sid),{headers:authHeader()});
+      const st=(data&&data.status)||"running";
+      if(ok&&st==="ready"){const r=await api("/api/result?id="+encodeURIComponent(sid),{headers:authHeader()});let rec=r.data;if(Array.isArray(rec))rec=rec[0];return settle({status:"done",record:rec||{}});}
+      if(st==="failed")return settle({status:"error",error:"Bright Data run failed."});
+      setEng("running","ChatGPT is thinking… ("+st+")");
+      run._t=setTimeout(tick,POLL_MS);
+    };
+    run._t=setTimeout(tick,1500);
+  }
+  function settle(p){if(!run||run.status!=="running")return;clearTimeout(run._t);Object.assign(run,p);stopTimer();$("bar").style.width="100%";setEng(p.status==="done"?"done":"fail",p.status==="done"?"done ✓":(p.error||"failed"));setRunning(false);render();}
+
+  function setRunning(on){$("runBtn").disabled=on;$("sampleBtn").disabled=on;$("runBtn").innerHTML=on?"running…":"🤖 Ask ChatGPT about me";$("runner").style.display=on?"block":"none";if(on){$("results").style.display="none";$("results").innerHTML="";$("runner").scrollIntoView({behavior:"smooth",block:"center"});}}
+  function setEng(kind,text){$("pulse").className="pulse"+(kind==="done"?" done":kind==="fail"?" fail":"");$("etext").textContent=text;}
+  const LINES=["Routing through a real browser so ChatGPT answers like it would for a human…","Waiting on the model to compose its answer…","Pulling any sources ChatGPT decided to cite…","Checking if your name shows up… or your competitors’ …"];
+  function startTimer(){let i=0;run.timer=setInterval(()=>{if(!run)return;const s=Math.floor((Date.now()-run.started)/1000);$("timer").textContent=s+"s";$("bar").style.width=Math.min(95,8+s*1.0)+"%";if(s%6===0){$("statusline").textContent=LINES[i%LINES.length];i++;}},1000);}
+  function stopTimer(){if(run&&run.timer)clearInterval(run.timer);}
+
+  function analyze(){
+    if(run.status!=="done")return{ok:false,error:run.error||"failed"};
+    const ans=answerOf(run.record),cites=citationsOf(run.record);
+    return{ok:true,answer:ans,cites,mentioned:brandInText(ans,run.brand),citedPos:brandCitedPos(cites,run.brand),related:Array.isArray(run.record.related_prompts)?run.record.related_prompts:[],model:run.record.model||CFG.model};
+  }
+
+  function render(){
+    const p=analyze(), brand=run.brand;
+    let vClass="neutral",vH="",vP="";
+    if(!p.ok){vClass="bad";vH="We couldn’t complete the check";vP=p.error||"ChatGPT errored.";}
+    else if(!brand){vClass="neutral";vH="Here’s what ChatGPT says";vP="Add your brand name above to get a verdict on whether ChatGPT names or cites you.";}
+    else if(p.citedPos){vClass="good";vH=brand+" is cited by ChatGPT ✓";vP="ChatGPT cited you as a source at #"+p.citedPos+". Now defend and climb — placement decides who gets quoted.";}
+    else if(p.mentioned){vClass="mixed";vH="ChatGPT says your name…";vP=brand+" appears in the answer. You’re in the conversation — now get into the sources it trusts.";}
+    else{vClass="bad";vH=brand+" is invisible to ChatGPT 👻";vP="ChatGPT never named you in this answer. The pages below are the ones it leans on — your ranked to-do list.";}
+
+    const tally={};
+    if(p.ok)for(const c of p.cites){if(!c.domain)continue;const isYou=brand&&c.domain.toLowerCase().replace(/[\s.]+/g,"").includes(brand.toLowerCase().replace(/[\s.]+/g,""))&&brand.length>=3;if(isYou)continue;tally[c.domain]=tally[c.domain]||{domain:c.domain,count:0,best:99,title:c.title};tally[c.domain].count++;tally[c.domain].best=Math.min(tally[c.domain].best,c.position);}
+    const board=Object.values(tally).sort((a,b)=>b.count-a.count||a.best-b.best).slice(0,8);
+
+    const stats=p.ok&&brand?`<div class="stats">
+      <div class="card stat"><div class="v">${p.mentioned?"Yes":"No"}</div><div class="k">Named in answer</div></div>
+      <div class="card stat"><div class="v">${p.citedPos?("#"+p.citedPos):"—"}</div><div class="k">Your citation rank</div></div>
+      <div class="card stat"><div class="v">${p.cites.length}</div><div class="k">Sources cited</div></div></div>`:"";
+
+    const card=engineCard(p,brand);
+    const boardHtml=board.length?`<div class="card board"><h3>Who ChatGPT trusts instead 🏆</h3><p class="bsub">The pages ChatGPT cited for “${esc(run.prompt)}”. Get listed here — in slot #1–2 — and ChatGPT starts surfacing you.</p><ol class="cites">${board.map((b,i)=>`<li class="cite"><span class="rank">${i+1}</span><div class="cmeta"><div class="cdom">${esc(b.domain)}</div>${b.title?`<div class="ctitle">${esc(b.title)}</div>`:""}</div><span class="tag2 tag-info">${b.count}× · best #${b.best}</span></li>`).join("")}</ol></div>`:"";
+
+    const exportHtml=`<div class="export"><span class="lab2">Export:</span><button class="btn" id="copyMd">📋 Copy report</button><button class="btn" id="dlJson">⬇︎ JSON</button><button class="btn" id="dlCsv">⬇︎ CSV</button><button class="btn btn-ghost" id="again">↻ New check</button></div>`;
+
+    $("results").innerHTML=`<div class="card verdict ${vClass}"><div class="vlabel">Verdict · ${esc(run.prompt)}</div><h2>${esc(vH)}</h2><p>${esc(vP)}</p></div>${stats}${card}${boardHtml}${exportHtml}`;
+    $("results").style.display="block";
+    $("results").querySelectorAll(".moreBtn").forEach((b)=>b.addEventListener("click",()=>{const a=b.previousElementSibling;a.classList.toggle("open");b.textContent=a.classList.contains("open")?"Show less ↑":"Read full answer ↓";}));
+    $("results").querySelectorAll(".related .rp").forEach((c)=>c.addEventListener("click",()=>{$("prompt").value=c.dataset.q;window.scrollTo({top:0,behavior:"smooth"});$("prompt").focus();}));
+    $("copyMd")&&$("copyMd").addEventListener("click",copyReport);
+    $("dlJson")&&$("dlJson").addEventListener("click",dlJson);
+    $("dlCsv")&&$("dlCsv").addEventListener("click",dlCsv);
+    $("again")&&$("again").addEventListener("click",()=>{$("results").style.display="none";window.scrollTo({top:0,behavior:"smooth"});$("brand").focus();});
+    $("results").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  function engineCard(p,brand){
+    if(!p.ok)return `<div class="card ecard"><div class="ec-top"><div class="ec-name">${CFG.icon} ${CFG.label}</div><div class="ec-tags"><span class="tag2 tag-no">error</span></div></div><div class="note">${esc(p.error||"failed")}</div></div>`;
+    const tags=[];
+    if(brand){tags.push(p.mentioned?`<span class="tag2 tag-yes">named ✓</span>`:`<span class="tag2 tag-no">not named</span>`);tags.push(p.citedPos?`<span class="tag2 tag-yes">cited #${p.citedPos}</span>`:`<span class="tag2 tag-mid">not cited</span>`);}
+    tags.push(`<span class="tag2 tag-info">${p.cites.length} sources</span>`);
+    const ans=p.answer||"(no answer returned)";const long=ans.length>320;
+    const citeList=p.cites.length?`<div class="citehead">Sources ChatGPT cited</div><ul class="cites">${p.cites.slice(0,10).map((c)=>{const you=brand&&c.domain&&c.domain.toLowerCase().replace(/[\s.]+/g,"").includes(brand.toLowerCase().replace(/[\s.]+/g,""))&&brand.length>=3;return `<li class="cite ${you?"you":""}"><span class="rank">${c.position}</span><div class="cmeta"><div class="cdom">${esc(c.domain||domainOf(c.url)||"source")} ${you?"— that’s you 🎉":""}</div>${c.title?`<div class="ctitle">${esc(c.title)}</div>`:""}</div>${c.url?`<a class="open" href="${esc(c.url)}" target="_blank" rel="noopener">open ↗</a>`:""}</li>`;}).join("")}</ul>`:"";
+    const noSearchNote=p.cites.length===0?`<div class="note">ChatGPT answered from memory without searching the web this time, so it returned no live citations. The “named” signal above still tells you whether it knows your brand. Try again with web search forced on.</div>`:"";
+    return `<div class="card ecard"><div class="ec-top"><div class="ec-name">${CFG.icon} ${CFG.label} <span class="muted mono" style="font-size:12px">${esc(p.model)}</span></div><div class="ec-tags">${tags.join("")}</div></div><div class="answer">${highlight(ans,brand)}<div class="fade"></div></div>${long?`<button class="moreBtn">Read full answer ↓</button>`:""}${noSearchNote}${citeList}</div>`;
+  }
+
+  function buildReport(){const p=analyze();const L=[];L.push(`# ChatGPT visibility report`,``,`**Brand:** ${run.brand||"(none)"}  `,`**Question:** ${run.prompt}  `,`**Checked:** ${new Date().toISOString()}`,``);if(!p.ok){L.push(`_Error: ${p.error}_`);}else{if(run.brand){L.push(`- Named in answer: ${p.mentioned?"YES":"no"}`,`- Cited as source: ${p.citedPos?"YES (#"+p.citedPos+")":"no"}`);}L.push(`- Sources cited: ${p.cites.length}`,``,`**Answer:** ${p.answer.replace(/\s+/g," ").trim()}`,``);if(p.cites.length){L.push(`**Citations:**`);p.cites.forEach((c)=>L.push(`${c.position}. ${c.domain||domainOf(c.url)} — ${c.url}`));L.push(``);}}L.push(`---`,`Generated by chatgpt-visibility-checker · built by Yaron (nofluff.online) · powered by Bright Data`);return L.join("\n");}
+  function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+  function copyReport(){navigator.clipboard.writeText(buildReport()).then(()=>{const b=$("copyMd"),o=b.textContent;b.textContent="Copied ✓";setTimeout(()=>b.textContent=o,1400);});}
+  function slug(){return (run.brand||"brand").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"report";}
+  function dlJson(){const p=analyze();download(`chatgpt-visibility-${slug()}.json`,JSON.stringify({brand:run.brand,prompt:run.prompt,generated:new Date().toISOString(),result:p},null,2),"application/json");}
+  function dlCsv(){const p=analyze();const rows=[["position","domain","url","title"]];if(p.ok)p.cites.forEach((c)=>rows.push([c.position,c.domain,c.url,(c.title||"").replace(/"/g,'""')]));const csv=rows.map((r)=>r.map((x)=>`"${String(x==null?"":x).replace(/"/g,'""')}"`).join(",")).join("\n");download(`chatgpt-visibility-${slug()}.csv`,csv,"text/csv");}
+
+  async function runSample(){clearErr();try{const res=await fetch("/sample.json");const s=await res.json();run={brand:s.brand,prompt:s.prompt,started:Date.now(),status:"done",record:s.record,error:null,timer:null};$("brand").value=s.brand;$("prompt").value=s.prompt;$("runner").style.display="none";render();}catch(e){showErr("Could not load the sample.");}}
+
+  buildChips();loadToken();
+  $("runBtn").addEventListener("click",startRun);
+  $("sampleBtn").addEventListener("click",runSample);
+  $("revealBtn").addEventListener("click",()=>{const t=$("token"),show=t.type==="password";t.type=show?"text":"password";$("revealBtn").textContent=show?"hide":"show";});
+  $("prompt").addEventListener("keydown",(e)=>{if(e.key==="Enter")startRun();});
+  $("brand").addEventListener("keydown",(e)=>{if(e.key==="Enter")$("prompt").focus();});
+})();
+</script>
+</body>
+</html>

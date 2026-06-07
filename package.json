@@ -1,0 +1,13 @@
+{
+  "name": "chatgpt-visibility-checker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ask ChatGPT whether it knows your brand exists. Live brand-visibility checker powered by Bright Data.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.86.0"
+  }
+}
