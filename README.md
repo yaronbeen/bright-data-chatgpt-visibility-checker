@@ -6,8 +6,8 @@ ChatGPT is where your buyers now ask *"what's the best tool for X?"*. It names a
 few brands and (when it searches) cites a few pages. If you're not in that
 answer, you're invisible at the exact moment of decision.
 
-Type your brand and a buyer question. This tool runs a **real, live ChatGPT
-session** (via Bright Data's ChatGPT scraper), then tells you whether you were:
+Type your brand and a buyer question. This tool runs your question through
+ChatGPT live (via Bright Data's ChatGPT dataset), then tells you whether you were:
 
 - **Named** in the answer,
 - **Cited** as a source (and at what rank), or
