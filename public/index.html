@@ -154,8 +154,8 @@
         <input id="token" class="input mono" type="password" placeholder="paste your Bright Data token" autocomplete="off" spellcheck="false" />
         <button class="reveal" id="revealBtn" type="button">show</button>
       </div>
-      <div class="keyhint"><label class="remember"><input type="checkbox" id="remember" /> Remember in this browser</label><span>·</span><span>No token? <a href="https://brightdata.com" target="_blank" rel="noopener">Create a Bright Data account →</a></span></div>
-      <p class="costnote">Each check runs a live query through <b>your own</b> Bright Data account and uses your credits (about a few cents). Your token is sent only to Bright Data — it isn’t stored on our servers. “Remember” keeps it in this browser only.</p>
+      <div class="keyhint"><span>No token? <a href="https://brightdata.com" target="_blank" rel="noopener">Create a Bright Data account →</a> Bright Data is a web-data vendor; its API powers the live query.</span></div>
+      <p class="costnote">Each check runs one live query through <b>your own</b> Bright Data account and uses your credits (roughly US$0.0015). Your token is passed straight to Bright Data through this page and isn’t stored — not on our servers, not in your browser.</p>
     </div>
     <div class="actions">
       <button class="btn btn-primary btn-lg" id="runBtn">🤖 Ask ChatGPT about my brand</button>
@@ -175,7 +175,7 @@
 
   <footer>
     <div class="love">Built by <a href="https://nofluff.online" target="_blank" rel="noopener">Yaron · nofluff.online</a></div>
-    <div class="pw">Powered by <a href="https://brightdata.com" target="_blank" rel="noopener">Bright&nbsp;Data</a> · you bring your own key — it’s sent only to Bright Data, not stored here</div>
+    <div class="pw">Powered by <a href="https://brightdata.com" target="_blank" rel="noopener">Bright&nbsp;Data</a> · you bring your own key — passed straight to Bright Data, we store nothing</div>
   </footer>
 </div>
 
@@ -191,11 +191,12 @@
   const esc = (s) => String(s==null?"":s).replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const safeUrl = (u) => { u=String(u||"").trim(); return /^https?:\/\//i.test(u)?u:""; };
   function domainOf(s){if(!s)return"";try{let u=String(s).trim();if(!/^https?:\/\//i.test(u))u="https://"+u;return new URL(u).hostname.replace(/^www\./,"");}catch{return String(s).replace(/^https?:\/\//i,"").replace(/^www\./,"").split("/")[0];}}
-  const hostLabels = (d) => String(d||"").toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-  function isYou(domain,brand){ if(!brand)return false; const b=brand.trim().toLowerCase().replace(/[^a-z0-9]+/g,""); if(b.length<3)return false; const L=hostLabels(domain); if(!L.length)return false; const sld=L.slice(0,-1).join(""); return sld===b||L.some((x)=>x===b); }
+  function registrableSld(domain){const host=String(domain||"").toLowerCase().replace(/^www\./,"");const L=host.split(".").filter(Boolean);if(L.length<2)return host;const two=L.slice(-2).join(".");const multi=["co.uk","com.au","co.jp","co.in","com.br","co.nz","co.za","com.mx","co.il","org.uk","ne.jp","or.jp"];if(multi.includes(two)&&L.length>=3)return L[L.length-3];return L[L.length-2];}
+  function isYou(domain,brand){if(!brand)return false;const b=brand.trim().toLowerCase().replace(/[^a-z0-9]+/g,"");if(b.length<3)return false;const host=String(domain||"").toLowerCase().replace(/^www\./,"");if(!host)return false;const sld=registrableSld(host).replace(/[^a-z0-9]+/g,"");if(sld&&sld===b)return true;if(host.replace(/[^a-z0-9]+/g,"")===b)return true;return false;}
   const plainAnswer=(r)=> r&&(r.answer_text||r.answer||r.answer_text_markdown||"")||"";
   const mdAnswer=(r)=> r&&(r.answer_text_markdown||r.answer_text||r.answer||"")||"";
-  function citationsOf(rec){if(!rec)return[];const out=[],seen=new Set();const push=(c)=>{if(!c)return;const raw=c.url||c.link||"";const url=safeUrl(raw);const domain=domainOf(url)||(c.domain?domainOf(c.domain):"");const key=(raw||domain||c.title||"").toLowerCase().trim();if(!key||seen.has(key))return;seen.add(key);out.push({url,title:c.title||c.name||"",domain,position:out.length+1});};for(const arr of [rec.citations,rec.sources,rec.search_sources,rec.references,rec.links_attached]){if(Array.isArray(arr))arr.forEach(push);}return out;}
+  function normKey(u){try{const x=new URL(/^https?:/i.test(u)?u:"https://"+u);return (x.hostname.replace(/^www\./,"")+x.pathname.replace(/\/+$/,"")).toLowerCase();}catch{return String(u||"").toLowerCase().trim();}}
+  function citationsOf(rec){if(!rec)return[];let src=[];for(const arr of [rec.citations,rec.sources,rec.search_sources,rec.references]){if(Array.isArray(arr)&&arr.length){src=arr;break;}}const out=[],seen=new Set();for(const c of src){if(!c||c.cited===false)continue;const raw=c.url||c.link||"";const url=safeUrl(raw);const domain=domainOf(url)||(c.domain?domainOf(c.domain):"");if(!domain&&!url)continue;const key=normKey(raw||domain||c.title||"");if(!key||seen.has(key))continue;seen.add(key);let pos=Number(c.position!=null?c.position:c.rank);if(!Number.isFinite(pos)||pos<1)pos=out.length+1;out.push({url,title:c.title||c.name||"",domain,position:pos});}out.sort((a,b)=>a.position-b.position);return out.map((c,i)=>({...c,position:i+1}));}
   function brandInText(text,brand){if(!brand||!text)return false;const b=brand.trim();if(b.length<2)return false;const pat=b.replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/[\s\-]+/g,"[\\s\\-]*");try{return new RegExp("(^|[^A-Za-z0-9])"+pat+"(?=[^A-Za-z0-9]|$)","i").test(text);}catch{return text.toLowerCase().includes(b.toLowerCase());}}
   function brandCitedPos(cites,brand){if(!brand)return null;for(const c of cites){if(isYou(c.domain,brand))return c.position;}return null;}
   function renderAnswer(md,brand){
@@ -208,8 +209,7 @@
 
   function showErr(m){const e=$("err");e.textContent=m;e.style.display="block";e.scrollIntoView({behavior:"smooth",block:"center"});}
   function clearErr(){const e=$("err");e.style.display="none";e.textContent="";}
-  function loadToken(){const t=localStorage.getItem("bd_token");if(t){$("token").value=t;$("remember").checked=true;}}
-  function persistToken(){if($("remember").checked)localStorage.setItem("bd_token",$("token").value.trim());else localStorage.removeItem("bd_token");}
+  // The token is intentionally NOT persisted anywhere (no localStorage, no cookies).
   function buildChips(){$("chips").innerHTML=EXAMPLES.map((e)=>`<span class="chip" data-q="${esc(e)}">${esc(e)}</span>`).join("");$("chips").querySelectorAll(".chip").forEach((c)=>c.addEventListener("click",()=>{$("prompt").value=c.dataset.q;$("prompt").focus();}));}
   function authHeader(){return{Authorization:"Bearer "+$("token").value.trim()};}
   async function api(path,opts={}){const res=await fetch(path,opts);const text=await res.text();let data;try{data=JSON.parse(text);}catch{data={raw:text};}return{ok:res.ok,status:res.status,data};}
@@ -218,8 +218,7 @@
     clearErr();
     const brand=$("brand").value.trim(), prompt=$("prompt").value.trim(), token=$("token").value.trim(), web_search=$("websearch").checked;
     if(!prompt)return showErr("Enter the question your buyers ask ChatGPT (e.g. “best CRM for startups”).");
-    if(!token)return showErr("Paste your Bright Data API token. It’s sent only to Bright Data and isn’t stored on our servers.");
-    persistToken();
+    if(!token)return showErr("Paste your Bright Data API token. It’s passed straight to Bright Data and isn’t stored anywhere.");
     setRunning(true);
     run={brand,prompt,started:Date.now(),status:"running",record:null,error:null,timer:null};
     $("runBrand").textContent=brand||"your brand";
@@ -300,7 +299,7 @@
     const md=p.answerMd||"(no answer returned)";const long=md.length>320;
     const citeList=p.cites.length?`<div class="citehead">Sources ChatGPT cited</div><ul class="cites">${p.cites.slice(0,10).map((c)=>{const you=isYou(c.domain,brand);const u=safeUrl(c.url);return `<li class="cite ${you?"you":""}"><span class="rank">${c.position}</span><div class="cmeta"><div class="cdom">${esc(c.domain||domainOf(c.url)||"source")}${you?" — that’s you 🎉":""}</div>${c.title?`<div class="ctitle">${esc(c.title)}</div>`:""}</div>${u?`<a class="open" href="${esc(u)}" target="_blank" rel="noopener noreferrer">open ↗</a>`:""}</li>`;}).join("")}</ul>`:"";
     const noSearchNote=p.cites.length===0?`<div class="note">ChatGPT answered from memory without searching the web this time, so there are no live citations. The “named” signal above still shows whether it knows your brand. Try again with web search forced on.</div>`:"";
-    return `<div class="card ecard"><div class="ec-top"><div class="ec-name">${CFG.icon} ${CFG.label}${p.model?` <span class="muted mono" style="font-size:12px">${esc(p.model)}</span>`:""}</div><div class="ec-tags">${tags.join("")}</div></div><div class="answer">${renderAnswer(md,brand)}<div class="fade"></div></div>${long?`<button class="moreBtn">Read full answer ↓</button>`:""}${noSearchNote}${citeList}</div>`;
+    return `<div class="card ecard"><div class="ec-top"><div class="ec-name">${CFG.icon} ${CFG.label}</div><div class="ec-tags">${tags.join("")}</div></div><div class="answer">${renderAnswer(md,brand)}<div class="fade"></div></div>${long?`<button class="moreBtn">Read full answer ↓</button>`:""}${noSearchNote}${citeList}</div>`;
   }
 
   function buildReport(){const p=analyze();const L=[];L.push(`# ChatGPT visibility report`,``,`**Brand:** ${run.brand||"(none)"}  `,`**Question:** ${run.prompt}  `,`**Checked:** ${new Date().toISOString()}`,``);if(!p.ok){L.push(`_Error: ${p.error}_`);}else{if(run.brand){L.push(`- Named in answer: ${p.mentioned?"YES":"no"}`,`- Cited as source: ${p.citedPos?"YES (position #"+p.citedPos+")":"no"}`);}L.push(`- Sources cited: ${p.cites.length}`,``,`**Answer:** ${p.answer.replace(/\s+/g," ").trim()}`,``);if(p.cites.length){L.push(`**Sources cited:**`);p.cites.forEach((c)=>L.push(`${c.position}. ${c.domain||domainOf(c.url)}${safeUrl(c.url)?" — "+safeUrl(c.url):""}`));L.push(``);}}L.push(`Note: AI answers vary between runs — this is one live snapshot.`,`---`,`Generated by chatgpt-visibility-checker · built by Yaron (nofluff.online) · powered by Bright Data`);return L.join("\n");}
@@ -312,7 +311,7 @@
 
   async function runSample(){clearErr();try{const res=await fetch("/sample.json");const s=await res.json();run={brand:s.brand,prompt:s.prompt,started:Date.now(),status:"done",record:s.record,error:null,timer:null};$("brand").value=s.brand;$("prompt").value=s.prompt;$("runner").style.display="none";render();}catch(e){showErr("Could not load the sample.");}}
 
-  buildChips();loadToken();
+  buildChips();
   $("runBtn").addEventListener("click",startRun);
   $("sampleBtn").addEventListener("click",runSample);
   $("revealBtn").addEventListener("click",()=>{const t=$("token"),show=t.type==="password";t.type=show?"text":"password";$("revealBtn").textContent=show?"hide":"show";});

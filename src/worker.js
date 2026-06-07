@@ -55,11 +55,12 @@ function humanError(data, text, status) {
 
 // Returns true when the request should be blocked. Fails open if the binding
 // is unavailable (e.g. local dev) so the tool still works.
-async function isRateLimited(env, request) {
+async function rl(env, request, binding) {
   try {
-    if (env && env.CHECK_RL && typeof env.CHECK_RL.limit === "function") {
+    const b = env && env[binding];
+    if (b && typeof b.limit === "function") {
       const ip = request.headers.get("CF-Connecting-IP") || "anon";
-      const { success } = await env.CHECK_RL.limit({ key: ip });
+      const { success } = await b.limit({ key: ip });
       return !success;
     }
   } catch {
@@ -78,7 +79,7 @@ async function handleCheck(request, env) {
   const token = getToken(request);
   if (!token) return json({ error: "Missing Bright Data API token." }, 401);
 
-  if (await isRateLimited(env, request)) {
+  if (await rl(env, request, "CHECK_RL")) {
     return json(
       { error: "Too many checks from your network. Please wait a minute and try again." },
       429,
@@ -129,9 +130,10 @@ async function handleCheck(request, env) {
   }
 }
 
-async function passthrough(request, url, kind) {
+async function passthrough(request, url, kind, env) {
   const token = getToken(request);
   if (!token) return json({ error: "Missing Bright Data API token." }, 401);
+  if (await rl(env, request, "POLL_RL")) return json({ error: "Too many requests — please slow down." }, 429, { "Retry-After": "30" });
   const id = url.searchParams.get("id") || "";
   if (!SNAPSHOT_RE.test(id)) return json({ error: "Invalid snapshot id." }, 400);
   const target = kind === "status" ? progressUrl(id) : snapshotUrl(id);
@@ -158,8 +160,8 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders() });
     if (url.pathname === "/api/health") return json({ ok: true });
     if (url.pathname === "/api/check" && request.method === "POST") return handleCheck(request, env);
-    if (url.pathname === "/api/status" && request.method === "GET") return passthrough(request, url, "status");
-    if (url.pathname === "/api/result" && request.method === "GET") return passthrough(request, url, "result");
+    if (url.pathname === "/api/status" && request.method === "GET") return passthrough(request, url, "status", env);
+    if (url.pathname === "/api/result" && request.method === "GET") return passthrough(request, url, "result", env);
     if (url.pathname.startsWith("/api/")) return json({ error: "Not found." }, 404);
     return env.ASSETS.fetch(request);
   },

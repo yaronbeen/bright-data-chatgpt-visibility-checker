@@ -30,10 +30,10 @@ Browser ──► Cloudflare Worker (same-origin proxy) ──► Bright Data Ch
 ```
 
 1. You enter a **brand**, a **buyer question**, and **your own Bright Data token**.
-2. The Worker triggers the ChatGPT scraper (`gd_m7aof0k82r803d5bjm`) with web
-   search on, and returns a snapshot ID.
-3. The page polls until the run is `ready` (~90s), then renders the answer, any
-   cited sources, and a verdict.
+2. The Worker calls the ChatGPT scraper (`gd_m7aof0k82r803d5bjm`) with web search
+   on, via the synchronous `/scrape` endpoint. Fast runs return the result inline;
+   long ones return a snapshot ID the page then polls (~60–90s total).
+3. It renders the answer, the sources ChatGPT actually cited, and a result.
 4. Export as Markdown, JSON, or CSV.
 
 | Engine | Dataset ID | Key inputs |
