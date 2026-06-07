@@ -50,11 +50,16 @@ Browser ──► Cloudflare Worker (same-origin proxy) ──► Bright Data Ch
 ## Bring Your Own Key (BYOK) — zero secrets
 
 **There is no API token in this repo or in the deployed Worker.** Each visitor
-pastes their **own** Bright Data token; it's forwarded per request and never
-stored, logged, or persisted. (A proxy is needed only because Bright Data's API
-doesn't send CORS headers, so a browser can't call it directly.)
+pastes their **own** Bright Data token; it's forwarded per request to Bright Data
+and **not stored on our servers** (the Worker keeps no database and doesn't log
+the token). If you tick **"Remember in this browser"**, it's saved only in your
+browser's `localStorage`; otherwise it isn't persisted anywhere. Your key, your
+credits — each check spends a few cents of **your own** Bright Data balance, and
+`POST /api/check` is rate-limited per IP. (A proxy is needed only because Bright
+Data's API doesn't send CORS headers, so a browser can't call it directly.)
 
-Get a free token at [brightdata.com](https://brightdata.com) → *Settings → API keys*.
+Create a Bright Data account at [brightdata.com](https://brightdata.com); the API
+token lives in your account settings under *API keys*.
 
 ---
 

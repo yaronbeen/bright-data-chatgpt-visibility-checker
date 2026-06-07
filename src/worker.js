@@ -8,23 +8,18 @@
  * it directly. This Worker forwards the request server-side, on the same origin.
  *
  * Bring Your Own Key (BYOK): the visitor pastes THEIR OWN Bright Data token in
- * the UI. It is sent as `Authorization: Bearer <token>`, forwarded verbatim to
- * Bright Data, and never stored, never logged, never written anywhere.
- * => No secrets live in this repo or in the deployed Worker.
+ * the UI. It is sent as `Authorization: Bearer <token>`, forwarded to Bright
+ * Data, and never persisted by this Worker (no KV, no logging of the token).
+ * The Worker forwards only the Authorization header it receives.
  *
- * Endpoints:
- *   POST /api/check        { prompt, brand, web_search } -> { snapshot_id }
- *   GET  /api/status?id=   sd_xxx                         -> { status }
- *   GET  /api/result?id=   sd_xxx                         -> snapshot data (json)
- *   GET  /api/health                                      -> { ok: true }
+ * Abuse protection: POST /api/check is rate-limited per client IP via a
+ * Cloudflare rate-limiting binding (CHECK_RL).
  */
 
 const DATASET_ID = "gd_m7aof0k82r803d5bjm"; // ChatGPT Search - search by prompt
 const BD_BASE = "https://api.brightdata.com";
 const scrapeUrl = (id) =>
   `${BD_BASE}/datasets/v3/scrape?dataset_id=${id}&notify=false&include_errors=true`;
-const triggerUrl = (id) =>
-  `${BD_BASE}/datasets/v3/trigger?dataset_id=${id}&notify=false&include_errors=true`;
 const progressUrl = (sid) => `${BD_BASE}/datasets/v3/progress/${sid}`;
 const snapshotUrl = (sid) => `${BD_BASE}/datasets/v3/snapshot/${sid}?format=json`;
 const SNAPSHOT_RE = /^s[dn]_[a-z0-9]+$/i;
@@ -58,9 +53,38 @@ function humanError(data, text, status) {
   return text?.slice(0, 300) || `Bright Data error (HTTP ${status}).`;
 }
 
-async function handleCheck(request) {
+// Returns true when the request should be blocked. Fails open if the binding
+// is unavailable (e.g. local dev) so the tool still works.
+async function isRateLimited(env, request) {
+  try {
+    if (env && env.CHECK_RL && typeof env.CHECK_RL.limit === "function") {
+      const ip = request.headers.get("CF-Connecting-IP") || "anon";
+      const { success } = await env.CHECK_RL.limit({ key: ip });
+      return !success;
+    }
+  } catch {
+    /* fail open */
+  }
+  return false;
+}
+
+function looksLikeRecord(rec) {
+  return !!rec && typeof rec === "object" && !Array.isArray(rec) &&
+    ("answer_text" in rec || "answer" in rec || "answer_text_markdown" in rec ||
+     "citations" in rec || "sources" in rec || "search_sources" in rec);
+}
+
+async function handleCheck(request, env) {
   const token = getToken(request);
   if (!token) return json({ error: "Missing Bright Data API token." }, 401);
+
+  if (await isRateLimited(env, request)) {
+    return json(
+      { error: "Too many checks from your network. Please wait a minute and try again." },
+      429,
+      { "Retry-After": "60" }
+    );
+  }
 
   let body;
   try { body = await request.json(); } catch { return json({ error: "Invalid request body." }, 400); }
@@ -76,9 +100,9 @@ async function handleCheck(request) {
   // ChatGPT scraper rejects an explicit country -> always send empty.
   const input = { url: "https://chatgpt.com/", prompt, country: "", web_search: webSearch, additional_prompt: "" };
 
-  // Sync-first: /scrape returns the data directly if the job finishes fast, or a
-  // 202 + snapshot_id for long jobs (ChatGPT usually exceeds the threshold), which
-  // the client then polls.
+  // Sync-first: /scrape returns the data directly for fast jobs, or a 202 +
+  // snapshot_id for long jobs (ChatGPT usually exceeds the threshold) which the
+  // client then polls.
   try {
     const r = await fetch(scrapeUrl(DATASET_ID), {
       method: "POST",
@@ -87,11 +111,18 @@ async function handleCheck(request) {
     });
     const text = await r.text();
     let data; try { data = JSON.parse(text); } catch { data = { raw: text }; }
-    if (r.status === 202 && data && data.snapshot_id) {
-      return json({ ok: true, brand, prompt, done: false, snapshot_id: data.snapshot_id });
+
+    // Long-running job: either a 202, or a 200 that returns a {snapshot_id} wrapper.
+    const snapId = (data && !Array.isArray(data) && data.snapshot_id) || null;
+    if ((r.status === 202 || (r.ok && snapId && !looksLikeRecord(data))) && snapId) {
+      return json({ ok: true, brand, prompt, done: false, snapshot_id: snapId });
     }
     if (!r.ok) return json({ error: humanError(data, text, r.status) }, r.status);
+
     const record = Array.isArray(data) ? data[0] : data;
+    if (!looksLikeRecord(record)) {
+      return json({ error: "Bright Data returned an unexpected response. Please try again." }, 502);
+    }
     return json({ ok: true, brand, prompt, done: true, record });
   } catch (e) {
     return json({ error: e?.message || "Failed to reach Bright Data." }, 502);
@@ -126,7 +157,7 @@ export default {
     if (request.method === "OPTIONS" && url.pathname.startsWith("/api/"))
       return new Response(null, { status: 204, headers: corsHeaders() });
     if (url.pathname === "/api/health") return json({ ok: true });
-    if (url.pathname === "/api/check" && request.method === "POST") return handleCheck(request);
+    if (url.pathname === "/api/check" && request.method === "POST") return handleCheck(request, env);
     if (url.pathname === "/api/status" && request.method === "GET") return passthrough(request, url, "status");
     if (url.pathname === "/api/result" && request.method === "GET") return passthrough(request, url, "result");
     if (url.pathname.startsWith("/api/")) return json({ error: "Not found." }, 404);
