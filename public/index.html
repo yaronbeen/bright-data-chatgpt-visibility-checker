@@ -222,7 +222,7 @@
     <div class="runhead"><h2>Asking ChatGPT about <span id="runBrand">your brand</span>…</h2><span class="timer" id="timer">0s</span></div>
     <div class="estate"><span class="pulse" id="pulse" aria-hidden="true"></span><span id="etext" aria-live="polite">starting…</span></div>
     <div class="bar"><i id="bar"></i></div>
-    <div class="statusline" id="statusline" aria-live="polite">Running a live ChatGPT query — this usually takes around 60–90 seconds (we’ll keep waiting up to 4 minutes).</div>
+    <div class="statusline" id="statusline" aria-live="polite">Running a live ChatGPT query — this usually takes around 60–90 seconds (we’ll keep waiting up to 5 minutes).</div>
     <div class="runfoot"><button class="btn btn-ghost" id="cancelBtn">Stop waiting</button> <span class="muted" style="font-size:12px">— stops the timer here; the query may still finish on Bright Data and use credits.</span></div>
   </section>
 
@@ -241,7 +241,7 @@
   // ---- config & state -------------------------------------------------------
   const CFG = { label: "ChatGPT", icon: "🤖" };
   const POLL_MS = 4000;             // how often we poll Bright Data for a long job
-  const MAX_MS = 4 * 60 * 1000;     // give up after 4 minutes
+  const MAX_MS = 5 * 60 * 1000;     // give up after 5 minutes
   const EXAMPLES = [
     "best AI ad creative tools in 2026",
     "best AI tools for Meta media buying",
