@@ -30,9 +30,11 @@ Browser ──► Cloudflare Worker (same-origin proxy) ──► Bright Data Ch
 ```
 
 1. You enter a **brand**, a **buyer question**, and **your own Bright Data token**.
-2. The Worker calls the ChatGPT scraper (`gd_m7aof0k82r803d5bjm`) with web search
-   on, via the synchronous `/scrape` endpoint. Fast runs return the result inline;
-   long ones return a snapshot ID the page then polls (~60–90s total).
+2. The Worker triggers the ChatGPT scraper (`gd_m7aof0k82r803d5bjm`) with web
+   search on via the asynchronous `/datasets/v3/trigger` endpoint, which returns
+   a `snapshot_id` immediately (no held-open connection, so no edge timeouts).
+   The page then polls `/api/status` until the job is ready and fetches the
+   record from `/api/result` (typically ~60–90s total).
 3. It renders the answer, the sources ChatGPT actually cited, and a result.
 4. Export as Markdown, JSON, or CSV.
 
@@ -76,19 +78,38 @@ No secrets to configure. Click **"See a real sample"** to view a real result for
 
 ### Raw API example
 
-The app calls the **synchronous** `/scrape` endpoint. Fast jobs return the record
-inline; long ChatGPT jobs return a `snapshot_id` to poll.
+The app uses the **asynchronous** flow: trigger a job, get a `snapshot_id` back
+immediately, poll progress, then download the snapshot.
 
 ```bash
-# synchronous: returns the record, or { "snapshot_id": "sd_..." } when it runs long
+# 1. trigger — returns { "snapshot_id": "sd_..." }
 curl -H "Authorization: Bearer $BRIGHT_DATA_API_TOKEN" -H "Content-Type: application/json" \
   -d '{"input":[{"url":"https://chatgpt.com/","prompt":"best AI tools for Meta media buying","country":"","web_search":true,"additional_prompt":""}]}' \
-  "https://api.brightdata.com/datasets/v3/scrape?dataset_id=gd_m7aof0k82r803d5bjm&notify=false&include_errors=true"
+  "https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_m7aof0k82r803d5bjm&notify=false&include_errors=true"
 
-# if you got a snapshot_id, poll then download:
+# 2. poll until status is "ready"
 curl -H "Authorization: Bearer $BRIGHT_DATA_API_TOKEN" "https://api.brightdata.com/datasets/v3/progress/sd_..."
+
+# 3. download the record
 curl -H "Authorization: Bearer $BRIGHT_DATA_API_TOKEN" "https://api.brightdata.com/datasets/v3/snapshot/sd_...?format=json"
 ```
+
+---
+
+## Tests
+
+The pure logic (brand matching, citation parsing, CSV/HTML escaping) lives in
+`public/lib.js`, which the page imports as a module **and** the tests import
+directly — so the suite exercises the exact code that ships. The Worker is tested
+by driving its `fetch` handler with mock requests and a stubbed `fetch`/`env`
+(no network, no token needed).
+
+```bash
+npm test        # node --test — zero dependencies
+```
+
+CI runs the same command on every push and pull request
+(`.github/workflows/ci.yml`).
 
 ---
 
@@ -97,10 +118,15 @@ curl -H "Authorization: Bearer $BRIGHT_DATA_API_TOKEN" "https://api.brightdata.c
 ```
 chatgpt-visibility-checker/
 ├── public/
-│   ├── index.html     # the whole front-end (neo-brutalist, vanilla JS)
+│   ├── index.html     # the front-end (neo-brutalist, vanilla JS module)
+│   ├── lib.js         # pure helpers — shared by the page AND the tests
 │   └── sample.json    # a real sample result for the no-key demo
 ├── src/
 │   └── worker.js      # stateless BYOK proxy
+├── test/
+│   ├── lib.test.js    # unit tests for the helpers
+│   └── worker.test.js # integration tests for the Worker
+├── .github/workflows/ci.yml
 ├── wrangler.jsonc
 └── package.json
 ```
