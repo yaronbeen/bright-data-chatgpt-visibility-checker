@@ -14,8 +14,8 @@ ChatGPT live (via Bright Data's ChatGPT dataset), then tells you whether you wer
 - **Invisible** — with the list of competitor pages ChatGPT leaned on instead.
 
 > Part of a 3-tool series on AI brand visibility. See also the
-> [Perplexity checker](https://github.com/yaronbeen/perplexity-visibility-checker)
-> and the combined [invisible-to-ai](https://github.com/yaronbeen/invisible-to-ai).
+> [Perplexity checker](https://github.com/yaronbeen/bright-data-perplexity-visibility-checker)
+> and the combined [invisible-to-ai](https://github.com/yaronbeen/bright-data-invisible-to-ai).
 >
 > Inspired by *["My SaaS Was Invisible to ChatGPT"](https://medium.com/@yaron.been/my-saas-was-invisible-to-chatgpt-i-built-a-scraping-pipeline-to-fix-it-4703bbed2345)*.
 
@@ -57,9 +57,6 @@ Your key, your credits — each check uses about **US$0.0015 per record** of **y
 own** Bright Data pay-as-you-go balance, and the `/api/*` endpoints are
 rate-limited per IP. (A proxy is needed only because Bright Data's API doesn't
 send CORS headers, so a browser can't call it directly.)
-
-> This is an independent project — not affiliated with or endorsed by Bright Data,
-> OpenAI, or Perplexity.
 
 Create a Bright Data account at [brightdata.com](https://brightdata.com); the API
 token lives in your account settings under *API keys*.
