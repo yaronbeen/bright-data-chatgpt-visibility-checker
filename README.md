@@ -1,6 +1,18 @@
 # 🤖 chatgpt-visibility-checker
 
+[![CI](https://github.com/yaronbeen/bright-data-chatgpt-visibility-checker/actions/workflows/ci.yml/badge.svg)](https://github.com/yaronbeen/bright-data-chatgpt-visibility-checker/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://chatgpt-visibility-checker.yaron-been.workers.dev)
+
 **Ask ChatGPT — live — whether it knows your brand exists.**
+
+### ▶ Try it now: **[chatgpt-visibility-checker.yaron-been.workers.dev](https://chatgpt-visibility-checker.yaron-been.workers.dev)**
+
+No install and no sign-up here — bring your own Bright Data key, type your brand
+and a question, and get a verdict in your browser. (Or click **"See a real
+sample"** to view a captured result with no key at all.)
+
+[![The chatgpt-visibility-checker interface](docs/screenshot.png)](https://chatgpt-visibility-checker.yaron-been.workers.dev)
 
 ChatGPT is where your buyers now ask *"what's the best tool for X?"*. It names a
 few brands and (when it searches) cites a few pages. If you're not in that
@@ -130,6 +142,20 @@ chatgpt-visibility-checker/
 ├── wrangler.jsonc
 └── package.json
 ```
+
+---
+
+## What to do with a "no"
+
+An invisible verdict isn't a dead end — it's a target list. The competitor pages
+ChatGPT cited are the pages it already trusts, so that ranked list *is* your
+to-do list: get featured on the ones that fit your brand, ideally near the top,
+phrased as one clean, quotable sentence a model can lift word for word. You don't
+optimize the model; you optimize what it retrieves. The full playbook is in the
+[article that inspired this](https://medium.com/@yaron.been/my-saas-was-invisible-to-chatgpt-i-built-a-scraping-pipeline-to-fix-it-4703bbed2345).
+
+Want the side-by-side view across **both** ChatGPT and Perplexity at once? Use
+[invisible-to-ai](https://github.com/yaronbeen/bright-data-invisible-to-ai).
 
 ---
 
