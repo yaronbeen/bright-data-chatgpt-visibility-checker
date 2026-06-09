@@ -73,7 +73,8 @@ rate-limited per IP. (A proxy is needed only because Bright Data's API doesn't
 send CORS headers, so a browser can't call it directly.)
 
 Create a Bright Data account at [brightdata.com](https://brightdata.com); the API
-token lives in your account settings under *API keys*.
+token lives in your account settings under *API keys*. New accounts include free
+trial credit, so you can try this without spending anything.
 
 ---
 
